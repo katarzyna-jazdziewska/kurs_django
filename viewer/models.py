@@ -28,3 +28,8 @@ class Movie(Model):
     # def save(self):
     #     self.nieobowiazkowa = "123"
     #     super(Movie, self).save()
+
+    # def save(self):
+    #     self.title = self.title.capitalize()
+    #     super(Movie, self).save()
+    #

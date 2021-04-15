@@ -1,10 +1,10 @@
+from logging import getLogger
 from django.shortcuts import render
 from django.http import HttpResponse
 from viewer.models import Movie, Genre
 from django.views import View
-from django.views.generic import TemplateView, ListView, CreateView, DetailView
-
-
+from django.views.generic import TemplateView, ListView, CreateView, DetailView, FormView
+from viewer.forms import MovieForm
 
 '''
 Pierwszy sposób przekazywania parametru s, wtedy trzeba w urlsach w ścieżce dać 'hello/<s>'
@@ -33,13 +33,36 @@ def hello(request):
     
 '''
 
+LOGGER = getLogger()
+
 
 class MoviesView(ListView):
     template_name = 'movies.html'
     model = Movie
-    paginate_by = 2
+    paginate_by = 20
 
 # extra_context = {'object_list': Movie.objects.all()}
+
+
+class MovieCreateView(FormView):
+    template_name = 'form.html'
+    form_class = MovieForm
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        cleaned_data = form.cleaned_data
+        Movie.objects.create(
+            title=cleaned_data['title'],
+            genre=cleaned_data['genre'],
+            rating=cleaned_data['rating'],
+            released=cleaned_data['released'],
+            description=cleaned_data['description']
+        )
+        return result
+
+    def form_invalid(self, form):
+        LOGGER.warning('User provided an invalid data!')
+        return super().form_invalid(form)
 
 #
 # class MoviesView(TemplateView):

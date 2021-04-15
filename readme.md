@@ -22,4 +22,3 @@ Movie.objects.filter(id=2).update(rating=9)
 # >>> filmy
 # <Movie: Movie object (6)>
 # >>> filmy.delete()
-
