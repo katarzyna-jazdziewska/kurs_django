@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from viewer.views import hello, movies, MoviesView, MovieCreateView
+from viewer.views import hello, movies, MoviesView, MovieCreateView, MovieUpdateView, MovieDeleteView
+
+# hello jest funkcją i wywołujemy to normalnie, a moviesView i MoviesCreateView są klasami dlatego wywyołujemy jako widok
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', hello, name='hello'),
     path('movie/', MoviesView.as_view(), name="filmy"),
-    path('movie/create/', MovieCreateView.as_view(), name='movie_create')
+    path('movie/create/', MovieCreateView.as_view(), name='movie_create'),
+    path('movie/update/<pk>/', MovieUpdateView.as_view(), name='movie_update'),
+    path('movie/delete/<pk>/', MovieDeleteView.as_view(), name='movie_delete'),
 ]

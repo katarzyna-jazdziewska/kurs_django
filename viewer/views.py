@@ -1,9 +1,11 @@
 from logging import getLogger
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.urls import reverse_lazy
+
 from viewer.models import Movie, Genre
 from django.views import View
-from django.views.generic import TemplateView, ListView, CreateView, DetailView, FormView
+from django.views.generic import TemplateView, ListView, CreateView, DetailView, FormView, UpdateView, DeleteView
 from viewer.forms import MovieForm
 
 '''
@@ -36,29 +38,48 @@ def hello(request):
 LOGGER = getLogger()
 
 
+class MovieDeleteView(DeleteView):
+    template_name = 'movie_confirm_delete.html'
+    model = Movie
+    success_url = reverse_lazy('filmy')
+
+
+class MovieUpdateView(UpdateView):
+    template_name = 'form.html'
+    model = Movie
+    form_class = MovieForm
+    success_url = reverse_lazy('filmy')
+
+    def form_invalid(self, form):
+        LOGGER.warning('User provided invalid data while updating a movie.')
+        return super().form_invalid(form)
+
+
 class MoviesView(ListView):
     template_name = 'movies.html'
     model = Movie
-    paginate_by = 20
+    paginate_by = 200   # w adresie strony ?page=2 przerzuca na drugą stronę
 
-# extra_context = {'object_list': Movie.objects.all()}
+# extra_context = {'object_list': list(Movie.objects.all())}    -> to się dzieje w tle
 
 
-class MovieCreateView(FormView):
+# FormView -> CreateView i wtedy można usunąć def form_valid
+class MovieCreateView(CreateView):
     template_name = 'form.html'
     form_class = MovieForm
+    success_url = reverse_lazy('movie_create')
 
-    def form_valid(self, form):
-        result = super().form_valid(form)
-        cleaned_data = form.cleaned_data
-        Movie.objects.create(
-            title=cleaned_data['title'],
-            genre=cleaned_data['genre'],
-            rating=cleaned_data['rating'],
-            released=cleaned_data['released'],
-            description=cleaned_data['description']
-        )
-        return result
+    # def form_valid(self, form):
+    #     result = super().form_valid(form)
+    #     cleaned_data = form.cleaned_data
+    #     Movie.objects.create(
+    #         title=cleaned_data['title'],
+    #         genre=cleaned_data['genre'],
+    #         rating=cleaned_data['rating'],
+    #         released=cleaned_data['released'],
+    #         description=cleaned_data['description']
+    #     )
+    #     return result
 
     def form_invalid(self, form):
         LOGGER.warning('User provided an invalid data!')
@@ -81,10 +102,8 @@ class MovieCreateView(FormView):
 #         )
 
 
-
-
-
 # w context można też dać np. filter(genre__name=gatunek)
+
 
 def movies(request):
     gatunek = request.GET.get('gatunek', '')

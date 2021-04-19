@@ -7,6 +7,7 @@
 {% block content %}
     <h1>Welcome to HollyMovies!</h1>
     <ul>
+<!--    object_list jest z klasy MoviesView    -->
         {% for movie in object_list %}
         <li>
            [id={{ movie.id }}] {{ movie.title }} ({{ movie.released.year }}) - {{ movie.genre.name }}
