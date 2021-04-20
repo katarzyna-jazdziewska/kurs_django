@@ -38,6 +38,11 @@ def hello(request):
 LOGGER = getLogger()
 
 
+class MovieDetailsView(DetailView):
+    template_name = 'detail.html'
+    model = Movie
+
+
 class MovieDeleteView(DeleteView):
     template_name = 'movie_confirm_delete.html'
     model = Movie
