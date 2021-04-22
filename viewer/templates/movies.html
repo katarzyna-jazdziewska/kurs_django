@@ -11,12 +11,12 @@
 <!--    object_list jest z klasy MoviesView    -->
         {% for movie in object_list %}
         <li>
-            <a href="{% url 'movie_details' movie.id %}">{{ movie.title | upper }} ({{ movie.released.year }}) - {{ movie.genre.name }}, {{ movie.description | truncatewords:4 }}</a>
+            <a href="{% url 'viewer:movie_details' movie.id %}">{{ movie.title | upper }} ({{ movie.released.year }}) - {{ movie.genre.name }}, {{ movie.description | truncatewords:4 }}</a>
         </li>
         {% empty %}
-        <h3>Nie ma nic do wyświetlenia!</h3>
+        <h5>Nie ma nic do wyświetlenia!</h5>
         {% endfor %}
     </ul>
-<a href="{% url 'movie_create' %}" class="btn btn-info">Add movie</a>
+<a href="{% url 'viewer:movie_create' %}" class="btn btn-info">Add movie</a>
 
 {% endblock %}

@@ -24,6 +24,6 @@ Rating: {{ object.rating }}/9 <br>
 {{ lista | slice:":5" }}<br>
 {% endautoescape %}
 
-<a href="{% url 'movie_update' object.id %}" class="btn btn-success">Update</a>
-<a href="{% url 'movie_delete' object.id %}" class="btn btn-danger">Delete</a>
+<a href="{% url 'viewer:movie_update' object.id %}" class="btn btn-success">Update</a>
+<a href="{% url 'viewer:movie_delete' object.id %}" class="btn btn-danger">Delete</a>
 {% endblock %}
