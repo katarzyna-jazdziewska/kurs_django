@@ -1,11 +1,22 @@
 from logging import getLogger
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
 
 from viewer.models import Movie, Genre
 from django.views import View
-from django.views.generic import TemplateView, ListView, CreateView, DetailView, FormView, UpdateView, DeleteView
+from django.views.generic import (TemplateView,
+                                  ListView,
+                                  CreateView,
+                                  DetailView,
+                                  FormView,
+                                  UpdateView,
+                                  DeleteView
+                                  )
 from viewer.forms import MovieForm
 
 '''
@@ -38,22 +49,27 @@ def hello(request):
 LOGGER = getLogger()
 
 
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+
 class MovieDetailsView(DetailView):
     template_name = 'detail.html'
     model = Movie
+    extra_context = {'lista': ['Dramat', 'Komedia', 'Sci-Fi', 'Historyczny', 'Thriller', 'Horror']}
 
 
-class MovieDeleteView(DeleteView):
+class MovieDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'movie_confirm_delete.html'
     model = Movie
-    success_url = reverse_lazy('filmy')
+    success_url = reverse_lazy('viewer:movie')
 
 
-class MovieUpdateView(UpdateView):
+class MovieUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Movie
     form_class = MovieForm
-    success_url = reverse_lazy('filmy')
+    success_url = reverse_lazy('viewer:movie')
 
     def form_invalid(self, form):
         LOGGER.warning('User provided invalid data while updating a movie.')
@@ -69,10 +85,10 @@ class MoviesView(ListView):
 
 
 # FormView -> CreateView i wtedy można usunąć def form_valid
-class MovieCreateView(CreateView):
+class MovieCreateView(LoginRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = MovieForm
-    success_url = reverse_lazy('movie_create')
+    success_url = reverse_lazy('viewer:movie_create')
 
     # def form_valid(self, form):
     #     result = super().form_valid(form)
@@ -118,12 +134,15 @@ def movies(request):
     )
 
 
+@login_required
 def hello(request):
     s1 = request.GET.get('s1', '')
+    user = request.user
     return render(
         request, template_name='hello.html',
         context={'adjectives': [s1, 'beautiful', 'wonderful', 'great'],
-                 'title': s1}
+                 'title': s1,
+                 'user': user}
         )
 
 

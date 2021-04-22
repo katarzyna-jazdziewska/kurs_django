@@ -6,13 +6,24 @@
 
 
 {% block content %}
-    <h1> {{ object.title }} </h1>
+<!--domyślnie jest autoescape on-->
+{% autoescape off %}
+    <h1> {{ object.title | escape }} </h1>
 {{ object.genre.name }} ({{ object.released }})<br>
 <hr>
-{{ object.description }}
+{{ object.description | linebreaksbr }}
+<!--linebreaksbr doda <br>, a linebreaks też to zrobi ale dodatkowo wsadzi całość w <p></p>-->
 <hr>
 Rating: {{ object.rating }}/9 <br>
 <br>
-<a href="{% url 'movie_update' object.id %}" class="btn btn-success">Update</a>
-<a href="{% url 'movie_delete' object.id %}" class="btn btn-danger">Delete</a>
+{{ lista }}<br>
+{{ lista.0 }}<br>
+{{ lista|join:" | " }}<br>
+{{ lista | last }}<br>
+{{ lista | length }}<br>
+{{ lista | slice:":5" }}<br>
+{% endautoescape %}
+
+<a href="{% url 'viewer:movie_update' object.id %}" class="btn btn-success">Update</a>
+<a href="{% url 'viewer:movie_delete' object.id %}" class="btn btn-danger">Delete</a>
 {% endblock %}
