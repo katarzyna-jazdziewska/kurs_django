@@ -1,7 +1,7 @@
 from logging import getLogger
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -59,17 +59,19 @@ class MovieDetailsView(DetailView):
     extra_context = {'lista': ['Dramat', 'Komedia', 'Sci-Fi', 'Historyczny', 'Thriller', 'Horror']}
 
 
-class MovieDeleteView(LoginRequiredMixin, DeleteView):
+class MovieDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'movie_confirm_delete.html'
     model = Movie
     success_url = reverse_lazy('viewer:movie')
+    permission_required = 'viewer.delete_movie'
 
 
-class MovieUpdateView(LoginRequiredMixin, UpdateView):
+class MovieUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'form.html'
     model = Movie
     form_class = MovieForm
     success_url = reverse_lazy('viewer:movie')
+    permission_required = 'viewer.change_movie'
 
     def form_invalid(self, form):
         LOGGER.warning('User provided invalid data while updating a movie.')
@@ -85,10 +87,11 @@ class MoviesView(ListView):
 
 
 # FormView -> CreateView i wtedy można usunąć def form_valid
-class MovieCreateView(LoginRequiredMixin, CreateView):
+class MovieCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = MovieForm
     success_url = reverse_lazy('viewer:movie_create')
+    permission_required = 'viewer.add_movie'
 
     # def form_valid(self, form):
     #     result = super().form_valid(form)
