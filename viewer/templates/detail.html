@@ -16,12 +16,14 @@
 <hr>
 Rating: {{ object.rating }}/9 <br>
 <br>
-{{ lista }}<br>
-{{ lista.0 }}<br>
+<!--{{ lista }}<br>-->
+<!--{{ lista.0 }}<br>-->
+{% comment %}
 {{ lista|join:" | " }}<br>
 {{ lista | last }}<br>
 {{ lista | length }}<br>
 {{ lista | slice:":5" }}<br>
+{% endcomment %}
 {% endautoescape %}
 
 <a href="{% url 'viewer:movie_update' object.id %}" class="btn btn-success">Update</a>
