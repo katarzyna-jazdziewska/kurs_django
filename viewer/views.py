@@ -1,7 +1,7 @@
 from logging import getLogger
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -49,6 +49,22 @@ def hello(request):
 LOGGER = getLogger()
 
 
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class SuperuserRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff and self.request.user.is_superuser
+
+
+class NameRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        user = self.request.user
+        return user.first_name != '' and user.last_name != ''
+
+
 class IndexView(TemplateView):
     template_name = 'index.html'
 
@@ -59,11 +75,14 @@ class MovieDetailsView(DetailView):
     extra_context = {'lista': ['Dramat', 'Komedia', 'Sci-Fi', 'Historyczny', 'Thriller', 'Horror']}
 
 
-class MovieDeleteView(PermissionRequiredMixin, DeleteView):
+class MovieDeleteView(StaffRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'movie_confirm_delete.html'
     model = Movie
     success_url = reverse_lazy('viewer:movie')
     permission_required = 'viewer.delete_movie'
+
+    def test_func(self):
+        return super().test_func() and self.request.user.is_superuser
 
 
 class MovieUpdateView(PermissionRequiredMixin, UpdateView):
@@ -87,7 +106,7 @@ class MoviesView(ListView):
 
 
 # FormView -> CreateView i wtedy można usunąć def form_valid
-class MovieCreateView(PermissionRequiredMixin, CreateView):
+class MovieCreateView(NameRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = MovieForm
     success_url = reverse_lazy('viewer:movie_create')
