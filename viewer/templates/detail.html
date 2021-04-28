@@ -24,6 +24,10 @@ Rating: {{ object.rating }}/9 <br>
 {{ lista | length }}<br>
 {{ lista | slice:":5" }}<br>
 {% endcomment %}
+<br>
+{% if object.image %}
+<img src="{{ object.image.url }}" height="150"><br><br>
+{% endif %}
 {% endautoescape %}
 
 <a href="{% url 'viewer:movie_update' object.id %}" class="btn btn-success">Update</a>
