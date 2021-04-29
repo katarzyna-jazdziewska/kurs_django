@@ -38,4 +38,4 @@ if settings.DEBUG:
 # C create
 # R read (List, Retrive)
 # U update
-# D delete
+# D deletefrom

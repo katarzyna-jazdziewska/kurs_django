@@ -1,3 +1,18 @@
+RESTful API
+
+/movie/ -> GET -> Read(List)
+        -> POST [JSON] -> Create
+/movie/{id}/ -> GET -> Read (Retrieve)
+            -> PUT/PATCH [JSON] -> Update / Partial Update
+            -> DELETE -> Delete
+
+
+request.POST <-
+
+title
+
+request.POST.get('title)
+
 
 
 model (ORM) ->

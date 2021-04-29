@@ -106,7 +106,7 @@ class MoviesView(ListView):
 
 
 # FormView -> CreateView i wtedy można usunąć def form_valid
-class MovieCreateView(NameRequiredMixin, PermissionRequiredMixin, CreateView):
+class MovieCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'form.html'
     form_class = MovieForm
     success_url = reverse_lazy('viewer:movie_create')
