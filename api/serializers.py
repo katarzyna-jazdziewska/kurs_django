@@ -13,3 +13,10 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ['title', 'description', 'genre', 'rating', 'released']
 
+    def create(self, validated_data):
+        # data = validated_data
+        # genre = Genre.objects.filter(id=validated_data['genre'])
+        # data['genre'] = genre
+        movie = Movie(**validated_data)
+        movie.save()
+        return movie
